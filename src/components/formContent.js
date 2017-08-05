@@ -6,7 +6,7 @@ class FormContent extends Component{
     };
     render=()=>{
         const {content}=this.props;
-        return <div classID={content.index} className={`folder`}>
+        return <div className={`folder`}>
             {content.name}
         </div>
     }

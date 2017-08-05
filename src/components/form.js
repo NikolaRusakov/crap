@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import FormGroupComp from './formGroup';
-import reducerFolder from '../reducers/reducer';
+import reducerFolder from '../folders/folders';
 import {Container} from 'reactstrap';
 
 class FormComp extends Component {
@@ -9,7 +9,7 @@ class FormComp extends Component {
     };
 
     componentDidMount() {
-        fetch('/slovicka')
+        fetch('/drive')
             .then(res => {
                 console.log(res);
                 if (res.ok) {
@@ -17,7 +17,7 @@ class FormComp extends Component {
                     return res.json();
                 }
             })
-            .then(data => this.setState({vocab: data.vocab}));
+            .then(data => this.setState({vocab: data}));
     }
 
     render = () => {
@@ -25,9 +25,10 @@ class FormComp extends Component {
         return <div>
 
             <Container>
-                {vocab.map((i) =>
+                {vocab && vocab.map((i) =>
 
                     <FormGroupComp
+                        key={i.id}
                         objectContent={i}
                     />
                 )

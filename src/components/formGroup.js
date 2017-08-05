@@ -16,6 +16,7 @@ class FormGroupComp extends Component {
         return <Row class>
             <Col md={{size: 'auto', offset: 2}}>
                 <FormContent
+
                     content={objectContent}
                 />
             </Col>

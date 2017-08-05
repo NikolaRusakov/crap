@@ -3,6 +3,7 @@ const readline = require('readline');
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const babel = require('babel-core');
+const path =require('path');
 let objFiles = {
   content: [],
 };
@@ -15,16 +16,18 @@ const TOKEN_DIR =
 const TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 
 // Load client secrets from a local file.
-fs.readFile('./creds/sec.json', function processClientSecrets(err, content) {
-  if (err) {
-    console.log('Error loading client secret file: ' + err);
-    return;
-  }
-  // Authorize a client with the loaded credentials, then call the
-  // Drive API.
-  authorize(JSON.parse(content), listFiles);
-});
+export default function (cb) {
 
+    fs.readFile(path.join(__dirname, '../creds/sec.json'), function processClientSecrets(err, content) {
+        if (err) {
+            console.log('Error loading client secret file: ' + err);
+            return;
+        }
+        // Authorize a client with the loaded credentials, then call the
+        // Drive API.
+        authorize(JSON.parse(content), (auth)=>listFiles(auth, cb));
+    });
+}
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -106,14 +109,13 @@ function storeToken(token) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listFiles(auth) {
+function listFiles(auth, cb) {
   var service = google.drive('v3');
   service.files.list(
-    {
-      auth: auth,
-        corpora:'user',
-        q: "mimeType = 'application/vnd.google-apps.folder' and trashed = false and 'root' in parents",
-      fields: 'nextPageToken, files(id, name,mimeType,createdTime)',
+    {auth:auth,
+    size:1000,
+        q: "'0B1u8SAxSJh3uNTlfWUpVdkJ6RVE' in parents and trashed = false",
+        fields: 'nextPageToken, files(id, name,mimeType,createdTime)',
         orderBy:'createdTime'
     },
     function(err, response) {
@@ -126,36 +128,8 @@ function listFiles(auth) {
         console.log('No files found.');
       } else {
         console.log('Files:');
-        for (let i = 0; i < files.length; i++) {
-          let file = files[i];
-          objFiles.content.push({ name: file.name, id: file.id ,mimeType: file.mimeType, created: file.createdTime});
-        }
-
-        let tmpObj = { content: [] };
-        tmpObj.content.push(...objFiles.content);
-        tmpObj.content.forEach((i, k) => console.log(i));
-
-     /*   fs.exists('googleDriveList.json', exists => {
-          /!*fs.readFile('googleDriveFiles.json', (err, data)=>{
-             if(exists){
-             console.log("rewrite current json file?");
-             }else{*!/
-          /!* objFiles=JSON.parse(data);*!/
-          if (!exists) {
-            console.log(`Saved`);
-            fs.writeFile(
-              './public/googleDriveList.json',
-              JSON.stringify(tmpObj),
-              'utf8',
-            );
-          } else {
-            console.log('loaded');
-            fs.readFile('./public/googleDriveList.json', (err, data) => {
-              if (err) throw err;
-              console.log(data);
-            });
-          }
-        });*/
+        console.log(files)
+        cb(files);
       }
     },
   );
