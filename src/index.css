@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+.folder{
+  background-color: #202099;
+  color: #faebff;
+}
+.container{
+  max-width:  500px;
+  margin-left: 0%;
+  background-color: #faebff;
+  opacity: 0.5;
+}
+#container-main-folder{
+  padding: 10px;
+}
+.row{
+  padding:10px 0 10px 0;
+}
